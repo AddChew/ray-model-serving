@@ -18,8 +18,18 @@ class Prediction(BaseModel):
     label: str
     score: float
 
-
-@serve.deployment(name = 'sentiment-analysis', num_replicas = 1)
+# TODO: api key
+@serve.deployment(
+    name = 'sentiment-analysis', 
+    autoscaling_config = {
+        "min_replicas": 1,
+        "initial_replicas": 1,
+        "max_replicas": 5,
+        "target_num_ongoing_requests_per_replica": 10,
+        "downscale_delay_s": 600,
+        "upscale_delay_s": 30,
+    },
+)
 @serve.ingress(app)
 class SentimentAnalysis:
 
@@ -33,6 +43,8 @@ class SentimentAnalysis:
         """
         Model Inference on payload data.
         """
+        import os
+        print(f'from process: {os.getpid()}')
         return self._classifier(payload.input_text)[0]
         
 
