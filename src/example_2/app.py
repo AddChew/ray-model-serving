@@ -1,13 +1,17 @@
 from ray import serve
-from fastapi import FastAPI
 from pydantic import BaseModel
+from access_key import api_key
 from transformers import pipeline
+from fastapi.security.api_key import APIKeyHeader
+from starlette.status import HTTP_401_UNAUTHORIZED
+from fastapi import FastAPI, Depends, Security, HTTPException
 
 
 app = FastAPI(
     title = 'Sentiment Analysis', 
     description = 'Documentation for Sentiment Analysis Model API'
 )
+api_key_header = APIKeyHeader(name = 'accessKey', auto_error = False)
 
 
 class Payload(BaseModel):
@@ -18,7 +22,19 @@ class Prediction(BaseModel):
     label: str
     score: float
 
-# TODO: api key
+
+class Message(BaseModel):
+    detail: str
+
+
+async def verify_api_key(api_key_header: str = Security(api_key_header)):
+    if api_key_header != api_key:
+        raise HTTPException(
+            status_code = HTTP_401_UNAUTHORIZED,
+            detail = 'Missing or invalid accessKey in request header.'
+        )
+
+
 @serve.deployment(
     name = 'sentiment-analysis', 
     autoscaling_config = {
@@ -38,8 +54,14 @@ class SentimentAnalysis:
         # Normally, will load the model here
         self._classifier = pipeline('sentiment-analysis')
 
-    @app.post('/model', tags = ['Model Inference'], description = 'Model Inference on payload data.')
-    def predict(self, payload: Payload) -> Prediction:
+    @app.post(
+            path = '/model', 
+            tags = ['Model Inference'], 
+            summary = 'Model Inference on payload data',
+            dependencies = [Depends(verify_api_key)],
+            responses = {401: {'model': Message}}
+    )
+    async def predict(self, payload: Payload) -> Prediction:
         """
         Model Inference on payload data.
         """
