@@ -1,0 +1,7 @@
+import json
+import requests
+
+
+url = 'http://localhost:8000/model'
+payload = json.dumps({'input_text': 'Hello friend!'})
+print(requests.post(url = url, data = payload).json())
