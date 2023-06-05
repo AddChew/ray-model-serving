@@ -1,3 +1,4 @@
+import os
 import logging
 from ray import serve
 from pydantic import BaseModel
@@ -16,16 +17,12 @@ api_key_header = APIKeyHeader(name = 'accessKey', auto_error = False)
 
 
 formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
-streamHandler = logging.StreamHandler()
-streamHandler.setLevel(logging.INFO)
-streamHandler.setFormatter(formatter)
 
 fileHandler = logging.FileHandler('/home/addison/Documents/Github/Repositories/ray-model-serving/test.log')
 fileHandler.setLevel(logging.INFO)
 fileHandler.setFormatter(formatter)
 
-logger = logging.getLogger(__name__)
-logger.addHandler(streamHandler)
+logger = logging.getLogger('ray.serve')
 logger.addHandler(fileHandler)
 
 
@@ -86,14 +83,16 @@ class SentimentAnalysis:
         """
         Model Inference on payload data.
         """
-        import os
-        print(f'from process: {os.getpid()}')
+        logger.info(f'from process: {os.getpid()}')
+        logger.info(f'Request: {payload.dict()}')
         if self._pipeline is None:
             raise HTTPException(
                 status_code = status.HTTP_501_NOT_IMPLEMENTED,
                 detail = 'Unable to load model pipeline.'
             )
-        return self._pipeline(payload.input_text)[0]
+        response = self._pipeline(payload.input_text)[0]
+        logger.info(f'Response: {response}')
+        return response
         
 
 deployment = SentimentAnalysis.bind()
