@@ -18,7 +18,7 @@ api_key_header = APIKeyHeader(name = 'accessKey', auto_error = False)
 
 formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
 
-fileHandler = logging.FileHandler('/home/addison/Documents/Github/Repositories/ray-model-serving/test.log')
+fileHandler = logging.FileHandler('sentiment_analysis_model_api.log')
 fileHandler.setLevel(logging.INFO)
 fileHandler.setFormatter(formatter)
 
