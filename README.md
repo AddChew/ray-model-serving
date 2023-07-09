@@ -12,7 +12,7 @@ conda activate model-serving
 
 ## How to run examples
 
-### Example 1
+### Example 1 (Toy example)
 
 1. Deploy model
 ```
@@ -31,7 +31,7 @@ python test_app.py
 4. Navigate to http://127.0.0.1:8265/ to view the ray dashboard
 
 
-### Example 2
+### Example 2 (FastAPI Integration)
 
 1. Deploy model
 ```
@@ -50,7 +50,7 @@ python test_app.py
 4. Navigate to http://127.0.0.1:8265/ to view the ray dashboard
 
 
-### Example 3
+### Example 3 (Batching)
 
 1. Deploy model
 ```
@@ -61,7 +61,29 @@ chmod +x ./deploy.sh
 
 2. Test model api
 ```
-cd src/example_2
+cd src/example_3
+python test_app.py
+```
+
+3. Navigate to http://127.0.0.1:8003/docs to interact with the api and view the api documentation
+
+4. Navigate to http://127.0.0.1:8001/ to view the ray dashboard
+
+5. Navigate to http://127.0.0.1:8002/ to view the ray metrics
+
+
+### Example 4 (Multiple models)
+
+1. Deploy model
+```
+cd src/example_4
+chmod +x ./deploy.sh
+./deploy.sh
+```
+
+2. Test model api
+```
+cd src/example_4
 python test_app.py
 ```
 
