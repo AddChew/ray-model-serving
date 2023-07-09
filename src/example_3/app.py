@@ -1,4 +1,5 @@
 import os
+import ray
 import logging
 import itertools
 import pandas as pd
@@ -95,7 +96,7 @@ class SentimentAnalysis:
         
         response = self._pipeline(df['input_text'].tolist())
         logger.info(f'Response: {response}')
-        return [response]
+        return response
 
     @app.post(
             path = '/model', 
@@ -117,3 +118,8 @@ class SentimentAnalysis:
 
 
 deployment = SentimentAnalysis.bind()
+
+
+if __name__ == '__main__':
+    handle = serve.run(deployment)
+    ray.get([handle.predict.remote([{'input_text': 'happy'}, {'input_text':'sad'}]) for _ in range(20)])
