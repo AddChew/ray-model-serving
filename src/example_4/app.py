@@ -102,9 +102,8 @@ class Driver:
         elif 'CFS' in payload.model:
             model = self._cfs_model
 
-        print(await model.remote(payload))
-
-        return await model.remote(payload)
+        ref = await model.remote(payload)
+        return await ref
 
 
 base_model = BaseModel.bind()
