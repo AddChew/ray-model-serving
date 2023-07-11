@@ -51,7 +51,7 @@ class BaseModel(FactoryModel):
 
 
 @serve.deployment(
-    name = 'CFSModel',
+    name = 'DOBModel',
     autoscaling_config = {
         'min_replicas': 1,
         'initial_replicas': 1,
@@ -61,7 +61,7 @@ class BaseModel(FactoryModel):
         'upscale_delay_s': 30,        
     }
 )
-class CFSModel(FactoryModel):
+class DOBModel(FactoryModel):
     pass
 
 
@@ -79,11 +79,11 @@ class CFSModel(FactoryModel):
 @serve.ingress(app)
 class Driver:
 
-    def __init__(self, base_model, cfs_model):
+    def __init__(self, base_model, dob_model):
         # Code in __init__ will only run once in each replica on startup
         # Normally, will load the model here
         self._base_model = base_model
-        self._cfs_model = cfs_model
+        self._dob_model = dob_model
 
     @app.post(
             path = '/model', 
@@ -99,13 +99,13 @@ class Driver:
         if 'BASE' in payload.model:
             model = self._base_model
 
-        elif 'CFS' in payload.model:
-            model = self._cfs_model
+        elif 'DOB' in payload.model:
+            model = self._dob_model
 
         ref = await model.remote(payload)
         return await ref
 
 
 base_model = BaseModel.bind()
-cfs_model = CFSModel.bind()
-driver = Driver.bind(base_model, cfs_model)
+dob_model = DOBModel.bind()
+driver = Driver.bind(base_model, dob_model)
