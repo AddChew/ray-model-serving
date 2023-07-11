@@ -20,3 +20,12 @@ class BasePayload(BaseModel):
 class DOBPayload(BaseModel):
     model: Literal['DOB.PERSON', 'DOB.CORPORATE', 'DOB.ALL']
     alerts: List[DOBAlert]
+
+
+class Prediction(BaseModel):
+    label: str
+    score: float
+
+
+class Message(BaseModel):
+    detail: str
