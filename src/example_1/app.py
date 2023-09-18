@@ -29,6 +29,31 @@ class SentimentAnalysis:
                 'model': self.model,
             }
         return {'message': 'Please provide input_text for inference.'}
+    
+
+@serve.deployment(name = 'sentiment-analysis-copy', route_prefix = '/model-copy', num_replicas = 1, user_config = {"model": DEFAULT_MODEL})
+class SentimentAnalysisCopy:
+
+    def __init__(self):
+        # Code in __init__ will only run once in each replica on startup
+        # Normally, will load the model here
+        self.model = DEFAULT_MODEL
+        self._classifier = pipeline(task = 'sentiment-analysis', model = self.model)
+
+    def reconfigure(self, config: dict):
+        self.model = config.get("model", DEFAULT_MODEL)
+        self._classifier = pipeline(task = 'sentiment-analysis', model = self.model)
+
+    async def __call__(self, request: Request) -> Dict:
+        payload = await request.json()
+        input_text = payload.get('input_text')
+        if input_text:
+            return {
+                'sentiment': self._classifier(input_text)[0],
+                'model': self.model,
+            }
+        return {'message': 'Please provide input_text for inference.'}
 
 
 deployment = SentimentAnalysis.bind()
+deployment_copy = SentimentAnalysisCopy.bind()

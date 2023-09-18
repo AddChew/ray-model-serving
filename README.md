@@ -114,6 +114,7 @@ serve config
 * Deploy/Redeploy deployment graph
 
 - A rolling update is performed if there are multiple replicas. Might end up getting responses from older replicas when the update is in progress.
+- If there is no code or config change for the deployment/application, then no deploy operation will be performed on it.  
 
 ```shell
 # i.e. serve deploy config.yaml

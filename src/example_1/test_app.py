@@ -7,6 +7,10 @@ import requests
 # print(requests.get(url = url, data = payload).json())
 
 
-# TODO: explore the use of update deployments via rest api
-# TODO: explore the use of multiple applications
-# TODO: explore see if possible to update deployments independently, instead of updating all at once when serve deploy is called
+# # API to retrieve information on all serve applications
+# url = 'http://localhost:52365/api/serve/applications/'
+# print(requests.get(url = url).json())
+
+
+# TODO: explore the use of update deployments via rest api: https://docs.ray.io/en/latest/serve/api/index.html#v2-rest-api-multi-application
+# TODO: explore and see if it is possible to update deployments independently, instead of updating all at once when serve deploy is called
