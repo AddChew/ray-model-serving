@@ -97,7 +97,8 @@ python test_app.py
 
 * Generate serve config files (Recommended approach for production)
 ```shell
-# i.e. serve build app:deployment -o config.yaml
+# i.e. serve build app:deployment -o config.yaml --single-app
+# i.e. serve build app:deployment -o config.yaml --multi-app
 serve build <module>:<deployment> -o <output config yaml file>
 ```
 
