@@ -1,0 +1,41 @@
+# This file was generated using the `serve build` command on Ray v2.6.1.
+
+proxy_location: EveryNode
+
+http_options:
+
+  host: 0.0.0.0
+
+  port: 8000
+
+applications:
+
+- name: muahahaha
+
+  route_prefix: /model
+
+  import_path: app:deployment
+
+  runtime_env: {}
+
+  deployments:
+
+  - name: sentiment-analysis
+    num_replicas: 2
+    user_config:
+      model: distilbert-base-uncased-finetuned-sst-2-english
+
+- name: muahahaha-copy
+
+  route_prefix: /model-copy
+
+  import_path: app:deployment
+
+  runtime_env: {}
+
+  deployments:
+
+  - name: sentiment-analysis
+    num_replicas: 2
+    user_config:
+      model: ahmedrachid/FinancialBERT-Sentiment-Analysis
