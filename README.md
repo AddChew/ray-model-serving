@@ -92,3 +92,30 @@ python test_app.py
 4. Navigate to http://127.0.0.1:8001/ to view the ray dashboard
 
 5. Navigate to http://127.0.0.1:8002/ to view the ray metrics
+
+## Useful Commands
+
+* Generate serve config files (Recommended approach for production)
+```shell
+# i.e. serve build app:deployment -o config.yaml
+serve build <module>:<deployment> -o <output config yaml file>
+```
+
+* Check health status
+```shell
+serve status
+```
+
+* Check current deployed serve config
+```shell
+serve config
+```
+
+* Deploy/Redeploy deployment graph
+
+- A rolling update is performed if there are multiple replicas. Might end up getting responses from older replicas when the update is in progress.
+
+```shell
+# i.e. serve deploy config.yaml
+serve deploy <config yaml file>
+```
