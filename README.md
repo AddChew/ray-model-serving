@@ -119,5 +119,7 @@ serve config
 
 ```shell
 # i.e. serve deploy config.yaml
+# --dashboard-agent-listen-port in ray start defaults to 52365
+# serve deploy config.yaml --address http://localhost:52365 (Can also be specified using RAY_AGENT_ADDRESS environment variable)
 serve deploy <config yaml file>
 ```

@@ -59,4 +59,9 @@ import requests
 # url = 'http://localhost:52365/api/serve/deployments/'
 # print(requests.delete(url = url))
 
-# TODO: explore and see if it is possible to update deployments independently, instead of updating all at once when serve deploy is called
+# TODO: explore and see if it is possible to update deployments independently, instead of updating all at once when serve deploy is called for single app
+# TODO: explore and see if it is possible to update deployments independently, instead of updating all at once when serve deploy is called for multi app
+
+# url = 'http://localhost:8000/model'
+# payload = json.dumps({'input_text': 'Hello friend!', 'model': 'distilbert-base-uncased-finetuned-sst-2-english'})
+# print(requests.get(url = url, data = payload).json())
