@@ -114,12 +114,20 @@ serve config
 
 * Deploy/Redeploy deployment graph
 
+- Cannot deploy both single app and multi app at the same time. To switch from one to another, have to call serve shutdown first before redeploying.
 - A rolling update is performed if there are multiple replicas. Might end up getting responses from older replicas when the update is in progress.
-- If there is no code or config change for the deployment/application, then no deploy operation will be performed on it.  
+- If there is no code or config change for the deployment/application, then no deploy operation will be performed on it. 
+- It is possible to update deployment independently for single application. Update will only happen for deployments with config change. 
+- It is possible to update deployment independently for multiple applications. Update will only happen for deployments with config change. 
 
 ```shell
 # i.e. serve deploy config.yaml
 # --dashboard-agent-listen-port in ray start defaults to 52365
 # serve deploy config.yaml --address http://localhost:52365 (Can also be specified using RAY_AGENT_ADDRESS environment variable)
 serve deploy <config yaml file>
+```
+
+* Shutdown serve deployments/applications
+```shell
+serve shutdown
 ```
