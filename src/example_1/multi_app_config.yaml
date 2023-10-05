@@ -12,9 +12,9 @@ applications:
 
 - name: muahahaha
 
-  route_prefix: /model
+  route_prefix: /model1
 
-  import_path: app:deployment
+  import_path: app:deployment1
 
   runtime_env: {}
 
@@ -27,15 +27,15 @@ applications:
 
 - name: muahahaha-copy
 
-  route_prefix: /model-copy
+  route_prefix: /model2
 
-  import_path: app:deployment
+  import_path: app:deployment2
 
   runtime_env: {}
 
   deployments:
 
-  - name: sentiment-analysis
+  - name: sentiment-analysis2
     num_replicas: 2
     user_config:
       model: ahmedrachid/FinancialBERT-Sentiment-Analysis
