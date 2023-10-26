@@ -4,14 +4,13 @@ from fastapi import FastAPI
 from transformers import pipeline
 
 
-app = FastAPI(
-    root_path = "/serve"
-)
+app = FastAPI()
+
 
 DEFAULT_MODEL = 'distilbert-base-uncased-finetuned-sst-2-english'
 
 
-@serve.deployment(name = 'sentiment-analysis', route_prefix = '/model1', num_replicas = 1, user_config = {"model": DEFAULT_MODEL})
+@serve.deployment(name = 'sentiment-analysis', route_prefix = '/model', num_replicas = 1)
 @serve.ingress(app)
 class SentimentAnalysis:
 
@@ -32,4 +31,4 @@ class SentimentAnalysis:
             }
         return {'message': 'Please provide input_text for inference.'}
 
-deployment1 = SentimentAnalysis.bind()
+deployment = SentimentAnalysis.bind()

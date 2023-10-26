@@ -1,5 +1,7 @@
 import pytest
+import requests
 
+from ray import serve
 from app import SentimentAnalysis
 
 
@@ -21,24 +23,27 @@ class TestSentimentAnalysisDeployment:
         }
 
 
+class TestSentimentAnalysisServer:
 
-# @serve.deployment(name = 'sentiment-analysis', route_prefix = '/model1', num_replicas = 1, user_config = {"model": DEFAULT_MODEL})
-# @serve.ingress(app)
-# class SentimentAnalysis:
+    def __setup_endpoint(self):
+        serve.run(
+            SentimentAnalysis.options(ray_actor_options = {"num_cpus": 0}).bind(), 
+        )
+    
+    def test_predict_server_response(self, ray_serve):
+        endpoint = f"{ray_serve.root_url}/model/predict"
+        self.__setup_endpoint()
 
-#     def __init__(self):
-#         # Code in __init__ will only run once in each replica on startup
-#         # Normally, will load the model here
-#         self.model = DEFAULT_MODEL
-#         self._classifier = pipeline(task = 'sentiment-analysis', model = self.model)
+        response = requests.post(endpoint, params = {"input_text": ""})
+        assert response.status_code == 200
+        assert response.json() == {'message': 'Please provide input_text for inference.'}
 
-#     @app.post("/predict")
-#     async def predict(self, input_text: str) -> Dict:
-#         # payload = await request.json()
-#         # input_text = payload.get('input_text')
-#         if input_text:
-#             return {
-#                 'sentiment': self._classifier(input_text)[0],
-#                 'model': self.model,
-#             }
-#         return {'message': 'Please provide input_text for inference.'}
+        response = requests.post(endpoint, params = {"input_text": "happy"})
+        assert response.status_code == 200
+        assert response.json() == {
+            "sentiment": {
+                "label": "POSITIVE",
+                "score": 0.9998753070831299,
+            }, 
+            "model": "distilbert-base-uncased-finetuned-sst-2-english",
+        }
