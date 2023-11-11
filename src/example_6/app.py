@@ -12,7 +12,7 @@ app = FastAPI()
 DEFAULT_MODEL = 'distilbert-base-uncased-finetuned-sst-2-english'
 
 
-@serve.deployment(name = 'sentiment-analysis', route_prefix = '/model', num_replicas = 1)
+@serve.deployment(name = 'sentiment-analysis', route_prefix = '/model', num_replicas = 2)
 @serve.ingress(app)
 class SentimentAnalysis:
 
@@ -25,12 +25,13 @@ class SentimentAnalysis:
             "model_scores",
             description = "Model scores",
             boundaries = np.linspace(0.1, 1, 10),
+            tag_keys = ("route", "model", "method")
         )
 
     @app.post("/predict")
     async def predict(self, input_text: str) -> Dict:
         sentiment = self._classifier(input_text)[0]
-        self.histogram.observe(sentiment["score"])
+        self.histogram.observe(sentiment["score"], tags = {"route": "/predict", "model": self.model, "method": "post"})
         if input_text:
             return {
                 'sentiment': sentiment,
