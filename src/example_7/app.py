@@ -9,16 +9,14 @@ from tenacity import retry, stop_after_attempt, wait_random
 app = FastAPI()
 
 
-logger = logging.getLogger("ray.serve")
-
-
 def custom_before_log(retry_state):
+    logger = retry_state.kwargs["logger"]
     logger.info(f"Attempt: {retry_state.attempt_number}")
 
 
-@retry(stop = stop_after_attempt(3), wait = wait_random(1, 2), before = custom_before_log)
-def do_something():
-    if np.random.uniform >= 0.1:
+@retry(stop = stop_after_attempt(3), wait = wait_random(1, 2), before = custom_before_log, reraise = True)
+def do_something(logger):
+    if np.random.uniform() >= 0.5:
         raise Exception("Something went wrong!")
 
 
@@ -39,7 +37,7 @@ class DummyShapPipeline:
         self.logger = logging.getLogger("ray.serve")
 
     def write_to_file(self):
-        do_something() # TODO: Figure out how to pass logger        
+        do_something(logger = self.logger)      
         self.logger.info(self.name)
         time = datetime.now().strftime("%Y_%m_%d_%H_%M_%S")
         filepath = f'./{time}.txt'
