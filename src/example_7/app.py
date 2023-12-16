@@ -16,7 +16,7 @@ def custom_before_log(retry_state):
 
 @retry(stop = stop_after_attempt(3), wait = wait_random(1, 2), before = custom_before_log, reraise = True)
 def do_something(logger):
-    if np.random.uniform() >= 0.5:
+    if np.random.uniform() >= 0.9:
         raise Exception("Something went wrong!")
 
 
@@ -29,7 +29,10 @@ class DummyModelPipeline:
         return "I am a dummy model pipeline"
 
 
-@serve.deployment
+@serve.deployment(
+    health_check_period_s = 30, # trigger check_health method every 30 seconds
+    # health_check_timeout_s = 30,
+)
 class DummyShapPipeline:
 
     def __init__(self, name, *args, **kwargs):
@@ -44,8 +47,10 @@ class DummyShapPipeline:
         with open(filepath, "w") as f:
             f.write(time + " " + self.name)
         return "Write to file successfully"
-        
     
+    def check_health(self):
+        self.write_to_file()
+        
 
 @serve.deployment(name = 'sentiment-analysis', route_prefix = '/model', num_replicas = 1)
 @serve.ingress(app)
