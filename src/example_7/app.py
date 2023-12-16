@@ -16,7 +16,7 @@ def custom_before_log(retry_state):
 
 @retry(stop = stop_after_attempt(3), wait = wait_random(1, 2), before = custom_before_log, reraise = True)
 def do_something(logger):
-    if np.random.uniform() >= 0.9:
+    if np.random.uniform() >= 0.7:
         raise Exception("Something went wrong!")
 
 
@@ -39,6 +39,9 @@ class DummyShapPipeline:
         self.name = name
         self.logger = logging.getLogger("ray.serve")
 
+        # import atexit
+        # atexit.register(self.write_to_file) # TODO: this does not work
+
     def write_to_file(self):
         do_something(logger = self.logger)      
         self.logger.info(self.name)
@@ -50,6 +53,13 @@ class DummyShapPipeline:
     
     def check_health(self):
         self.write_to_file()
+
+    def __del__(self):
+        self.write_to_file()
+
+    # def __ray_terminate__(self): # TODO: this does not work
+    #     self.write_to_file()
+    #     super().__ray_terminate__()
         
 
 @serve.deployment(name = 'sentiment-analysis', route_prefix = '/model', num_replicas = 1)
